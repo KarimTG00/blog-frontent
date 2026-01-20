@@ -2,8 +2,10 @@ import { Search, Menu } from "lucide-react";
 import { useContext, useState } from "react";
 import { AppContext } from "./context";
 import { useNavigate } from "react-router-dom";
+import ModalMenu from "./menu";
 export default function HeaderHome() {
-  const { isDesktop, isTablette, isPhone } = useContext(AppContext);
+  const { isDesktop, isTablette, isPhone, menuTrue, setMenuTrue } =
+    useContext(AppContext);
   const [isSearch, setIsSearch] = useState(false);
 
   const navigate = useNavigate();
@@ -79,7 +81,11 @@ export default function HeaderHome() {
                   onClick={() => setIsSearch(true)}
                 />
               </div>
-              <Menu />
+              <Menu
+                onClick={() => setMenuTrue(!menuTrue)}
+                className="cursor-pointer"
+              />
+              {menuTrue && <ModalMenu />}
             </div>
           </div>
           <div className="text-center space-x-3 text-normal text-green-500 font-bold underline">
@@ -123,7 +129,11 @@ export default function HeaderHome() {
                   onClick={() => setIsSearch(true)}
                 />
               </div>
-              <Menu />
+              <Menu
+                onClick={() => setMenuTrue(!menuTrue)}
+                className="cursor-pointer"
+              />
+              {menuTrue && <ModalMenu />}
             </div>
           </div>
           <div className="text-center space-x-3 text-normal text-green-500 font-bold underline">
