@@ -3,6 +3,7 @@ import { AppContext } from "./components/context.jsx";
 import Home from "./pages/home.jsx";
 import { useMediaQuery } from "react-responsive";
 import SinglePage from "./pages/SinglePage.jsx";
+import NewsLetter from "./pages/newsLetter.jsx";
 function App() {
   const router = createBrowserRouter([
     {
@@ -12,6 +13,10 @@ function App() {
     {
       path: "/single/:id",
       element: <SinglePage />,
+    },
+    {
+      path: "/inscription",
+      element: <NewsLetter />,
     },
   ]);
 

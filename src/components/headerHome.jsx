@@ -1,11 +1,12 @@
 import { Search, Menu } from "lucide-react";
 import { useContext, useState } from "react";
 import { AppContext } from "./context";
+import { useNavigate } from "react-router-dom";
 export default function HeaderHome() {
   const { isDesktop, isTablette, isPhone } = useContext(AppContext);
   const [isSearch, setIsSearch] = useState(false);
 
-  console.log(isDesktop, isTablette, isPhone);
+  const navigate = useNavigate();
 
   return (
     <header className=" bg-black  top-0">
@@ -25,7 +26,10 @@ export default function HeaderHome() {
               <h1 className="text-4xl font-bold text-white">CrypToBlog</h1>
             </div>
             <div className=" flex gap-4 ">
-              <button className="py-1 px-4 bg-white rounded-2xl text-lg">
+              <button
+                className="py-1 px-4 bg-white rounded-2xl text-lg"
+                onClick={() => navigate("/inscription")}
+              >
                 NewsLetter
               </button>
               <button className="py-1 px-4 bg- rounded-2xl text-lg bg-emerald-400 text-white font-semibold">
