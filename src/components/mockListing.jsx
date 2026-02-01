@@ -1,4 +1,3 @@
-import img1 from "../assets/image1.webp";
 import img2 from "../assets/image2.webp";
 import img3 from "../assets/image3.webp";
 import img4 from "../assets/image4.webp";
@@ -6,9 +5,6 @@ import img5 from "../assets/image5.webp";
 import img6 from "../assets/image6.webp";
 import img7 from "../assets/image7.webp";
 import img8 from "../assets/image8.webp";
-import img9 from "../assets/image9.webp";
-import img10 from "../assets/image10.webp";
-import img11 from "../assets/image11.webp";
 
 export const ListingMock = [
   {
@@ -24,9 +20,9 @@ Hé bien la poire est de retour et cette fois, elle a mangé du lion !
 Le nouveau cru de ce clone de macOS a troqué sa vieille base Debian pour une base Arch Linux toute neuve baptisée NiceC0re. Et là, on est sur de la distribution en rolling release, donc toujours à jour, avec un noyau 6.17 sous le capot. C'est donc une vraie petite machine Linux qui ne demande qu'à ronronner sur vos vieux laptops.
 
 L'interface est quand même le coeur du truc et je la trouve plutôt bien réussi... C'est à base de KDE Plasma 6.5.3 mais ils l'ont tellement bidouillé qu'on jurerait être devant un Mac d'il y a quelques années. Ils appellent ça le "Liquid Gel Design". Bon, le nom fait un peu gel douche pour geek, mais le résultat visuel est juste mortel ! Tout est fluide, les animations glissent toutes seules et les effets de flou sont partout.`,
-    img: "https://korben.info/cdn-cgi/image/width=1920,fit=scale-down,quality=90,f=webp/envmap-secrets-sans-fichier-env-disque-github-leaks/envmap-secrets-sans-fichier-env-disque-github-leaks-1.png",
     author: "Auteur 1",
     date: "2023-05-01",
+    img: "https://korben.info/cdn-cgi/image/width=1920,fit=scale-down,quality=90,f=webp/envmap-secrets-sans-fichier-env-disque-github-leaks/envmap-secrets-sans-fichier-env-disque-github-leaks-1.png",
   },
   {
     id: 2,
@@ -126,7 +122,7 @@ L'interface est quand même le coeur du truc et je la trouve plutôt bien réuss
   },
   {
     id: 14,
-    title: "OGhidra - Dopage à l'IA pour Ghidra en local`",
+    title: "OGhidra - Dopage à l'IA pour Ghidra en local",
     img: "https://korben.info/cdn-cgi/image/width=1920,fit=scale-down,quality=90,f=webp/pearos-le-clone-de-macos-sous-arch-linux-qui-envoie-du-pate/pearos-le-clone-de-macos-sous-arch-linux-qui-envoie-du-pate-1.png",
     content: "Contenu de l'article 4",
     author: "Auteur 4",

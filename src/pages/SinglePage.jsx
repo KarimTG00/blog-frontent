@@ -1,28 +1,252 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ListingMock } from "../components/mockListing";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import HeaderHome from "../components/headerHome";
 import { AppContext } from "../components/context";
 import { ThumbsUp } from "lucide-react";
 import Footer from "../components/Footer";
 
 export default function SinglePage() {
-  const { isDesktop, isTablette, isPhone } = useContext(AppContext);
-  const { id } = useParams();
-  console.log(id);
-  const [article, setArticle] = useState();
+  const navigate = useNavigate();
+
+  const { isDesktop, isPhone, isTablette } = useContext(AppContext);
   const [liked, setLiked] = useState(false);
-  const [articleRecent, setArticleRecent] = useState();
+
+  const [singleArticle, setSingleArticle] = useState();
+
+  function extractText(node, result = []) {
+    if (node.type === "text" && node.text) {
+      // on verifie si le texte est en bold ou c'est un link
+      const isBold = node.marks?.some((mark) => mark.type === "bold");
+      const isLink = node.marks?.find((mark) => mark.type === "link");
+
+      result.push({
+        type: "text",
+        value: node.text,
+        bold: !!isBold,
+        link: isLink?.attrs?.href ?? null,
+      });
+      return result;
+    }
+
+    if (node.type === "hardBreak") {
+      result.push({
+        type: "break",
+        value: `<br />`,
+      });
+      return result;
+    }
+
+    if (node.type === "paragraph" && node.content) {
+      const texts = [];
+      node.content?.forEach((child) => extractText(child, texts));
+
+      result.push({
+        type: "paragraph",
+        content: texts.map((el) => el.value).join(""),
+      });
+    }
+
+    // pour les titres
+    if (node.type === "heading") {
+      const texts = [];
+      node.content?.forEach((child) => extractText(child, texts));
+      result.push({
+        type: "heading",
+        level: node.attrs?.level ?? 1,
+        content: texts.map((el) => el.value).join(""),
+      });
+    }
+
+    // pour les images
+    if (node.type === "image" && node.attrs?.src) {
+      result.push({
+        type: "image",
+        src: node.attrs.src,
+      });
+    }
+
+    // si le noeud a des enfants on rappels la fonction
+    if (Array.isArray(node.content)) {
+      node.content.forEach((child) => extractText(child, result));
+    }
+
+    return result;
+  }
+
+  function texts(el) {
+    if (el.type === "image") {
+      return (
+        <div className="aspect-video overflow-hidden">
+          <img
+            src={el.src}
+            alt="une image"
+            className="rounded-lg w-full object-cover h-full"
+          />
+        </div>
+      );
+    }
+    if (el.type === "heading") {
+      if (el.level === 1) {
+        return <h1>{el.content}</h1>;
+      }
+      if (el.level === 2) {
+        return <h2>{el.content}</h2>;
+      }
+      return <h3>{el.content}</h3>;
+    }
+    if (el.type === "break") {
+      return <br />;
+    }
+    if (el.type === "text") {
+      if (el.bold) {
+        return (
+          <strong
+            className={`sm:text-xl text-lg whitespace-pre-wrap text-gray-900 `}
+          >
+            {el.value}
+          </strong>
+        );
+      }
+
+      if (el.link)
+        return (
+          <a
+            href={el.link}
+            className="text-green-600 hover:underline cursor-pointer"
+          >
+            {el.value}
+          </a>
+        );
+
+      return (
+        <span
+          className={`sm:text-xl text-lg whitespace-pre-wrap text-gray-900`}
+        >
+          {el.value}
+        </span>
+      );
+    }
+  }
+
+  const { id } = useParams();
 
   useEffect(() => {
-    const found = ListingMock.find((el) => el.id === Number(id));
-    setArticle(found);
-  }, [id]);
+    async function getArticle() {
+      try {
+        const res = await fetch(`http://localhost:4000/article/${id}`, {
+          method: "GET",
+          headers: { "Content-type": "application/json" },
+        });
+
+        if (!res.ok) {
+          if (res.status === 500 || res.status === 501) {
+            const data = await res.json();
+            console.log(data);
+            return;
+          }
+          const data = await res.text();
+          console.log(data);
+          return;
+        }
+
+        const data = await res.json();
+
+        // on format l'article tiptap en objet utilisable
+        const parsed = [];
+        for (const el of data.content) {
+          const result = [];
+          extractText(el, result); // on appelle la fonction d'extraction de texte
+          parsed.push(...result);
+        }
+
+        setSingleArticle({ ...data, content: parsed });
+      } catch (error) {
+        console.log("voici l'erreur", error);
+      }
+    }
+    getArticle();
+  }, []);
+
+  console.log("voici le singleArticle", singleArticle);
+  function findImage(data) {
+    if (!data || !data.content) return null;
+    for (const node of data.content) {
+      if (node.type === "image") return node;
+      return null;
+    }
+    return null;
+  }
+
+  const image = findImage(singleArticle);
 
   return (
     <div className="h-full">
       <HeaderHome />
-      {article && (
+      <div className="flex flex-col sm:gap-5">
+        {singleArticle && (
+          <div>
+            {image && (
+              <img
+                src={image.src}
+                alt="une image"
+                className="w-full object-cover max-h-120"
+              />
+            )}
+          </div>
+        )}
+        <div className="sm:w-4xl mx-3 sm:mx-auto">
+          <div className={`${isDesktop ? "sm:text-center" : "text-left"}`}>
+            <h1 className="text-3xl lg:text-5xl sm:text-4xl font-bold my-5">
+              {singleArticle && singleArticle.title}
+            </h1>
+          </div>
+          <div
+            className={`${isDesktop || isTablette ? "flex gap-8 items-center sm:justify-center" : "space-x-3"}`}
+          >
+            <span className="text-gray-500 text-lg">
+              {singleArticle && singleArticle.createdAt} /
+            </span>
+            <span className="text-gray-500 text-lg">
+              Par {singleArticle && singleArticle.auteur} /
+            </span>
+            <span className="text-gray-500 text-lg">
+              {singleArticle && singleArticle.durer} min de lecture/
+            </span>
+            <span className="text-gray-500 text-lg">Crytpomonaies</span>
+          </div>
+          <div className="mt-8 ">
+            <div>
+              <p
+                className={`${isDesktop || isTablette ? "text-xl" : "text-lg"} whitespace-pre-wrap text-gray-900 mx-auto`}
+              >
+                {" "}
+                {singleArticle &&
+                  singleArticle.content
+                    .slice(1)
+                    .map((el, index) => (
+                      <React.Fragment key={index}>{texts(el)}</React.Fragment>
+                    ))}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mt-8 justify-center">
+              <p className="text-lg"> Vous avez aimé cette article ? </p>
+              <button
+                type="button"
+                aria-pressed={liked}
+                onClick={() => setLiked((prev) => !prev)}
+                className="outline-none cuspr-pointer"
+              >
+                <ThumbsUp
+                  className={liked ? "text-blue-800" : "text-gray-500"}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* {article && (
         <div>
           <div className="flex flex-col gap-5">
             <div>
@@ -36,7 +260,7 @@ export default function SinglePage() {
               className={`${isDesktop ? "ex flex-col gap-5 max-w-180 mx-auto text-lg" : "flex flex-col gap-5 mx-2"}`}
             >
               <div className={`${isDesktop ? "sm:text-center" : "text-left"}`}>
-                <h1 className="text-3xl sm:text-4xl font-bold my-5">
+                <h1 className="text-3xl lg:text-5xl sm:text-4xl font-bold my-5">
                   {article.title}
                 </h1>
               </div>
@@ -70,7 +294,7 @@ export default function SinglePage() {
               </div>
             </div>
 
-            {/* Articles recents */}
+            Articles recents
             <div
               className={`${isDesktop || isTablette ? "px-10" : "px-0"} space-y-5`}
             >
@@ -88,6 +312,7 @@ export default function SinglePage() {
                     <li
                       key={index}
                       className="hover:border-2 mx-2 sm:mx-0 not-even:hover:rounded-lg hover:border-green-700 hover:scale-101 duration-75 rounded-lg"
+                      onClick={() => navigate(`/single/${el.id}`)}
                     >
                       <div className="flex shadow-sm gap-2 items-center cursor-pointer">
                         <div className="aspect-video">
@@ -110,7 +335,7 @@ export default function SinglePage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <Footer />
     </div>
   );

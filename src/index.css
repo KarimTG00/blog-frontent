@@ -1,1 +1,68 @@
 @import "tailwindcss";
+
+.article {
+  line-height: 1.7;
+}
+.article h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+@media (min-width: 640px) {
+  .article h1 {
+    font-size: 1.875rem;
+  }
+}
+.Article p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* H2 */
+.article h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.article h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* paragraphe */
+
+.article p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+/* tablette */
+@media (min-width: 640px) {
+  .article h2 {
+    font-size: 1.5rem;
+  }
+  .article h3 {
+    font-size: 1.25rem;
+  }
+  .article p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+}
+/* desktop */
+@media (min-width: 1024px) {
+  .article h2 {
+    font-size: 1.875rem;
+  }
+  .article h3 {
+    font-size: 1.5rem;
+  }
+  .article p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+}

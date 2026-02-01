@@ -16,9 +16,6 @@ export default function ModalMenu() {
           >
             NewsLetter
           </button>
-          <button className="py-1 px-4 bg- rounded-xl text-lg bg-emerald-400 text-white font-semibold">
-            Patreon
-          </button>
         </div>
       </div>
     </div>
