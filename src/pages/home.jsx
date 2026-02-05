@@ -4,9 +4,11 @@ import HeaderHome from "../components/headerHome";
 
 export default function Home() {
   return (
-    <div className="relative">
+    <div className="relative flex flex-col min-h-screen border">
       <HeaderHome />
-      <BodyHome />
+      <div className="flex-1">
+        <BodyHome />
+      </div>
       <Footer />
     </div>
   );
