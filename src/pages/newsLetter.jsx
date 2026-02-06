@@ -29,7 +29,7 @@ export default function NewsLetter() {
               Inscrivez-vous à notre newsletter et recevez directement dans
               votre boîte mail tout ce qu’il faut savoir pour ne rien manquer du
               monde de la crypto. <br /> <br /> Rejoignez notre communauté dès
-              maintenant !
+              maintenant!
             </p>
           </div>
           <div className="">

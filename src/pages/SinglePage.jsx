@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { ListingMock } from "../components/mockListing";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderHome from "../components/headerHome";
 import { AppContext } from "../components/context";
@@ -9,7 +8,7 @@ import Footer from "../components/Footer";
 export default function SinglePage() {
   const navigate = useNavigate();
 
-  const { isDesktop, isTablette, article, isPhone } = useContext(AppContext);
+  const { isDesktop, isTablette, article } = useContext(AppContext);
   const [liked, setLiked] = useState(false);
 
   const [singleArticle, setSingleArticle] = useState();

@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { ListingMock } from "./mockListing";
 import { AppContext } from "./context";
 import { useNavigate } from "react-router-dom";
-import { generateHTML } from "@tiptap/core";
-import StarterKit from "@tiptap/starter-kit";
+
 import Description from "./admin/description";
 import Image from "./admin/Image";
 import { getTime } from "./date";
