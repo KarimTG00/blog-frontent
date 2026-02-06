@@ -129,6 +129,7 @@ function App() {
     return result;
   }
 
+  console.log("on a ajouté vercel.json");
   useEffect(() => {
     async function getDoc() {
       try {
