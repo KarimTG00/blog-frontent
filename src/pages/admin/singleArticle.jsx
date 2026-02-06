@@ -79,11 +79,14 @@ export default function SingleArticles() {
       values,
     };
     try {
-      const res = await fetch(`http://localhost:4000/updateArticle/${id}`, {
-        method: "put",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify(objet),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/updateArticle/${id}`,
+        {
+          method: "put",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify(objet),
+        },
+      );
       if (!res.ok) {
         const data = await res.text();
         console.log(data);
