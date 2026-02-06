@@ -13,10 +13,13 @@ export default function SingleArticles() {
   useEffect(() => {
     async function getArticle() {
       try {
-        const res = await fetch(`http://localhost:4000/article/${id}`, {
-          method: "get",
-          headers: { "Content-type": "application/json" },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/article/${id}`,
+          {
+            method: "get",
+            headers: { "Content-type": "application/json" },
+          },
+        );
         if (!res.ok) {
           const data = await res.text();
           console.log(data);

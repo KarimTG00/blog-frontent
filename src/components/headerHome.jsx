@@ -1,14 +1,10 @@
 import { Search, Menu } from "lucide-react";
 import { useContext, useState } from "react";
 import { AppContext } from "./context";
-import { useNavigate } from "react-router-dom";
 import ModalMenu from "./menu";
 export default function HeaderHome() {
-  const { isDesktop, isTablette, isPhone, menuTrue, setMenuTrue } =
-    useContext(AppContext);
+  const { menuTrue, setMenuTrue } = useContext(AppContext);
   const [isSearch, setIsSearch] = useState(false);
-
-  const navigate = useNavigate();
 
   return (
     <header className=" bg-black  top-0">

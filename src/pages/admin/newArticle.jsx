@@ -1,11 +1,9 @@
 import { useContext } from "react";
 import { AppContext } from "../../components/context";
 import Tiptap from "../../components/admin/Titap";
-import { generateHTML } from "@tiptap/core";
 
 export default function NewArticles() {
   const { editor, contentJSON } = useContext(AppContext);
-  const html = generateHTML;
   // function pour envoyer l'article au backend
 
   async function handleSubmit(e) {
@@ -14,7 +12,7 @@ export default function NewArticles() {
     if (!editor) {
       return null;
     }
-    const json = editor.getJSON();
+    const json = editor.getJSON(); // on recupere le contenu de l'éditeur au format JSON
     const formData = new FormData(e.target);
     const values = Object.fromEntries(formData.entries());
     const objet = {
@@ -23,7 +21,7 @@ export default function NewArticles() {
     };
 
     try {
-      const res = await fetch("http://localhost:4000/new", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/new`, {
         method: "post",
         headers: { "Content-type": "Application/json" },
         body: JSON.stringify(objet),

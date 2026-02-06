@@ -14,7 +14,7 @@ export default function AdminMenu() {
   useEffect(() => {
     async function total() {
       try {
-        const res = await fetch("http://localhost:4000/getArticles", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/getArticles`, {
           method: "GET",
           headers: { "Content-type": "application/json" },
         });
@@ -37,10 +37,11 @@ export default function AdminMenu() {
     total();
   }, []);
 
+  //on recupéres le nombre de vues du jour
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("http://localhost:4000/dayViews", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/dayViews`, {
           method: "GET",
           headers: { "Content-type": "application/json" },
         });

@@ -1,6 +1,5 @@
 import { EditorContent, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useEffect } from "react";
 import { Image, Link } from "lucide-react";
 
 export default function MenuBar({ editor, addImage }) {

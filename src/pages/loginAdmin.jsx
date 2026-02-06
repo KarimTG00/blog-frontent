@@ -1,9 +1,6 @@
-import { useContext } from "react";
-import { AppContext } from "../components/context";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginAdmin() {
-  //   const { isDesktop, isTablette, isPhone } = useContext(AppContext);
   const navigate = useNavigate();
 
   async function connectAdmin(e) {
@@ -12,7 +9,7 @@ export default function LoginAdmin() {
     const values = Object.fromEntries(formData.entries());
 
     try {
-      const res = await fetch("http://localhost:4000/admin", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin`, {
         method: "post",
         headers: { "Content-type": "Application/json" },
         body: JSON.stringify(values),

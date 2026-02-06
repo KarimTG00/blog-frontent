@@ -132,7 +132,7 @@ function App() {
   useEffect(() => {
     async function getDoc() {
       try {
-        const res = await fetch("http://localhost:4000/articles", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/articles`, {
           method: "get",
           headers: { "Content-type": "application/json" },
         });
@@ -150,8 +150,6 @@ function App() {
 
         const data = await res.json(); // tableau de tous les articles
 
-        console.log("voici la data avant : ", data);
-
         // on formate le contenu tiptap en contenu utilisable
         data.forEach((el) => {
           const parsed = [];
@@ -163,9 +161,8 @@ function App() {
           );
         });
         setArticle(data);
-        console.log("le html ici :", data);
       } catch (error) {
-        console.log("une erreur", error);
+        return error;
       }
     }
     getDoc();
@@ -195,12 +192,14 @@ function App() {
 
   async function DeleteArticle(id) {
     // todo delete article function
-    console.log("delete article with id :", id);
     try {
-      const res = await fetch(`http://localhost:4000/supprimerArticle/${id}`, {
-        method: "delete",
-        headers: { "Content-type": "application/json" },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/supprimerArticle/${id}`,
+        {
+          method: "delete",
+          headers: { "Content-type": "application/json" },
+        },
+      );
 
       if (!res.ok) {
         if (res.status === 404) {
