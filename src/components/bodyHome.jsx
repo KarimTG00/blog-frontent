@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { ListingMock } from "./mockListing";
 import { AppContext } from "./context";
 import { useNavigate } from "react-router-dom";
 
