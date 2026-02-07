@@ -133,10 +133,13 @@ export default function SinglePage() {
   useEffect(() => {
     async function getArticle() {
       try {
-        const res = await fetch(`http://localhost:4000/article/${id}`, {
-          method: "GET",
-          headers: { "Content-type": "application/json" },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/article/${id}`,
+          {
+            method: "GET",
+            headers: { "Content-type": "application/json" },
+          },
+        );
 
         if (!res.ok) {
           if (res.status === 500 || res.status === 501) {

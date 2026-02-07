@@ -1,13 +1,17 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../components/context";
 import Tiptap from "../../components/admin/Titap";
 
 export default function NewArticles() {
   const { editor, contentJSON } = useContext(AppContext);
   // function pour envoyer l'article au backend
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [submit, setSubmit] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setSubmit(true);
 
     if (!editor) {
       return null;
@@ -21,6 +25,7 @@ export default function NewArticles() {
     };
 
     try {
+      setLoading(true);
       const res = await fetch(`${import.meta.env.VITE_API_URL}/new`, {
         method: "post",
         headers: { "Content-type": "Application/json" },
@@ -29,13 +34,18 @@ export default function NewArticles() {
       if (!res.ok) {
         const data = await res.text();
         console.log(data);
+        setError(true);
         return;
       }
 
       const data = await res.json();
       console.log(data);
+      setError(false);
     } catch (error) {
+      setError(true);
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
   console.log(contentJSON);
@@ -107,8 +117,22 @@ export default function NewArticles() {
               className="  bg-green-600 py-2 text-xl  px-5 rounded-xl text-white "
               type="submit"
             >
-              Publier l'article
+              {loading ? (
+                <span>Publication en cours...</span>
+              ) : (
+                <span className="text-white">Publier l'article</span>
+              )}
             </button>
+          </div>
+          <div className="flex justify-end">
+            {error && submit && (
+              <span className="text-red-500 text-lg">
+                Une erreur, réessayer
+              </span>
+            )}
+            {!error && submit && (
+              <span className="text-green-500 text-lg">Article publié ✅</span>
+            )}
           </div>
         </form>
       </div>

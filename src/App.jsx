@@ -195,7 +195,7 @@ function App() {
     // todo delete article function
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/supprimerArticle/${id}`,
+        `${import.meta.env.VITE_API_URL}/deleteArticle/${id}`,
         {
           method: "delete",
           headers: { "Content-type": "application/json" },
