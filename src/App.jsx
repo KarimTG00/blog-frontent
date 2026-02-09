@@ -16,7 +16,6 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
-import Paragraph from "@tiptap/extension-paragraph";
 import { useEffect } from "react";
 function App() {
   const router = createBrowserRouter([
@@ -129,10 +128,14 @@ function App() {
     return result;
   }
 
-  console.log("on a ajouté vercel.json");
+  // on gére la recuperation des articles
+
+  const [loadingArticles, setLoadingArticles] = useState(false);
+  const [errorArticles, setErrorArticles] = useState(false);
   useEffect(() => {
     async function getDoc() {
       try {
+        setLoadingArticles(true);
         const res = await fetch(`${import.meta.env.VITE_API_URL}/articles`, {
           method: "get",
           headers: { "Content-type": "application/json" },
@@ -142,9 +145,11 @@ function App() {
           if (res.status === 500) {
             const data = await res.json();
             console.log("une erreur : ", data);
+            setErrorArticles(true);
             return;
           }
-          const data = res.text();
+          const data = await res.text();
+          setErrorArticles(true);
           console.log(data);
           return;
         }
@@ -163,7 +168,11 @@ function App() {
         });
         setArticle(data);
       } catch (error) {
-        return error;
+        setErrorArticles(true);
+        console.log("une erreur lors de la recuperation des articles :", error);
+        return `voici l'erreur: ${error}`;
+      } finally {
+        setLoadingArticles(false);
       }
     }
     getDoc();
@@ -236,6 +245,8 @@ function App() {
         editor,
         article,
         setArticle,
+        loadingArticles,
+        errorArticles,
         DeleteArticle,
       }}
     >
