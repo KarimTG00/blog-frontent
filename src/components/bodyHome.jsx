@@ -20,7 +20,7 @@ export default function BodyHome() {
           </h1>
         </div>
         {loadingArticles && (
-          <div className="flex-1 min-w-full justify-center items-center">
+          <div className="flex-1 min-w-full justify-center items-center flex">
             <Loading />
           </div>
         )}
