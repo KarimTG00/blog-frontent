@@ -6,7 +6,7 @@ import { ThumbsUp } from "lucide-react";
 import Footer from "../components/Footer";
 import Loading from "../components/loading";
 import ErrorArticle from "../components/errorArticle";
-import Image from "../components/admin/Image";
+import ImageRecent from "../components/imageRecent";
 
 export default function SinglePage() {
   const navigate = useNavigate();
@@ -299,8 +299,8 @@ export default function SinglePage() {
                           className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
                         >
                           <div className="flex gap-2 items-center cursor-pointer h-fit">
-                            <div className="size-24 rounded-lg overflow-hidden">
-                              <Image el={el} />
+                            <div className="rounded-lg overflow-hidden">
+                              <ImageRecent el={el} />
                             </div>
 
                             <div className="">
