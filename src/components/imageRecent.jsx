@@ -9,7 +9,7 @@ export default function ImageRecent({ el }) {
   const image = findImages(el);
   console.log(image.src);
   return (
-    <div className="size-24 overflow-hidden">
+    <div className="size-15 overflow-hidden">
       <img
         src={image && image.src}
         alt=""
