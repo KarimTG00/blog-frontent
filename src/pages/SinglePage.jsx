@@ -299,10 +299,7 @@ export default function SinglePage() {
                           className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
                         >
                           <div className="flex gap-2 items-center cursor-pointer h-fit">
-                            <div className="rounded-lg overflow-hidden size-15">
-                              <ImageRecent el={el} />
-                            </div>
-
+                            <ImageRecent el={el} />
                             <div className="">
                               <h2 className="font-semibold md:text-xl">
                                 {el.title}
