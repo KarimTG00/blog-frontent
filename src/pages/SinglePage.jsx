@@ -298,8 +298,10 @@ export default function SinglePage() {
                           key={index}
                           className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
                         >
-                          <div className="flex gap-2 items-center cursor-pointer h-full">
-                            <Image el={el} />
+                          <div className="flex gap-2 items-center cursor-pointer h-fit">
+                            <div className="size-24 rounded-lg overflow-hidden">
+                              <Image el={el} />
+                            </div>
 
                             <div className="">
                               <h2 className="font-semibold md:text-xl">
