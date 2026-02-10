@@ -6,6 +6,7 @@ import { ThumbsUp } from "lucide-react";
 import Footer from "../components/Footer";
 import Loading from "../components/loading";
 import ErrorArticle from "../components/errorArticle";
+import Image from "../components/admin/Image";
 
 export default function SinglePage() {
   const navigate = useNavigate();
