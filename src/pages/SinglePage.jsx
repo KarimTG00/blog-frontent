@@ -295,14 +295,14 @@ export default function SinglePage() {
                       <Link to={`/single/${el._id}`}>
                         <li
                           key={index}
-                          className="hover:border-2 mx-2 sm:mx-0 hover:scale-101 duration-75 rounded-lg  sm:h-40 hover:text-green-700"
+                          className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit hover:text-green-700"
                         >
-                          <div className="flex shadow-sm gap-2 items-center cursor-pointer h-full">
+                          <div className="flex gap-2 items-center cursor-pointer h-full">
                             <div className="aspect-video">
                               <img
-                                src={image && image.src}
+                                src={el.image && el.image.src}
                                 alt="photo"
-                                className={`lg:size-30 lg:w-30 lg:h-20 sm:w-25 sm:h-15w-25 h-15 object-cover rounded-lg`}
+                                className={`object-cover rounded-lg`}
                               />
                             </div>
                             <div className="">
