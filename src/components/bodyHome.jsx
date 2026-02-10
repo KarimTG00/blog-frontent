@@ -38,7 +38,6 @@ export default function BodyHome() {
                 <div
                   key={index}
                   className=" shadow-sm  rounded-lg cursor-pointer hover:scale-101 hover:border-2 hover:border-green-700 duration-100"
-                  // onClick={() => navigate(`/single/${el._id}`)}
                 >
                   <div>
                     <Image el={el} />
