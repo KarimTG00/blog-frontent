@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderHome from "../components/headerHome";
 import { AppContext } from "../components/context";
@@ -181,6 +181,8 @@ export default function SinglePage() {
   }, []);
 
   console.log("voici le singleArticle", singleArticle);
+
+  // fonction pour trouver la première image de l'article
   function findImage(data) {
     if (!data || !data.content) return null;
     for (const node of data.content) {
@@ -189,6 +191,8 @@ export default function SinglePage() {
     }
     return null;
   }
+
+  // fonction pour trouver les autres articles sauf celui affiché
 
   function otherArticle() {
     const others = article.filter((el) => el._id !== id);
@@ -285,29 +289,30 @@ export default function SinglePage() {
                 </div>
                 <div className="mb-10">
                   <ul
-                    className={`lg:grid-cols-3 lg:gap-3 sm:grid-cols-2 sm:gap-3 grid-cols-1 gap-1 grid space-y-5`}
+                    className={`sm:grid-cols-2 sm:gap-3 grid-cols-1 gap-1 grid space-y-5`}
                   >
                     {otherArticle()?.map((el, index) => (
-                      <li
-                        key={index}
-                        className="hover:border-2 mx-2 sm:mx-0 not-even:hover:rounded-lg hover:border-green-700 hover:scale-101 duration-75 rounded-lg  border sm:h-40"
-                        onClick={() => navigate(`/single/${el.id}`)}
-                      >
-                        <div className="flex shadow-sm gap-2 items-center cursor-pointer h-full">
-                          <div className="aspect-video">
-                            <img
-                              src={el.img}
-                              alt="photo"
-                              className={`lg:size-30 lg:w-30 lg:h-20 sm:w-25 sm:h-15w-25 h-15 object-cover rounded-lg`}
-                            />
+                      <Link to={`/single/${el._id}`}>
+                        <li
+                          key={index}
+                          className="hover:border-2 mx-2 sm:mx-0 hover:scale-101 duration-75 rounded-lg  sm:h-40 hover:text-green-700"
+                        >
+                          <div className="flex shadow-sm gap-2 items-center cursor-pointer h-full">
+                            <div className="aspect-video">
+                              <img
+                                src={image && image.src}
+                                alt="photo"
+                                className={`lg:size-30 lg:w-30 lg:h-20 sm:w-25 sm:h-15w-25 h-15 object-cover rounded-lg`}
+                              />
+                            </div>
+                            <div className="">
+                              <h2 className="font-semibold md:text-xl">
+                                {el.title}
+                              </h2>
+                            </div>
                           </div>
-                          <div className="p-3 sm:p-3">
-                            <h2 className="font-semibold md:text-xl">
-                              {el.title}
-                            </h2>
-                          </div>
-                        </div>
-                      </li>
+                        </li>
+                      </Link>
                     ))}
                   </ul>
                 </div>
