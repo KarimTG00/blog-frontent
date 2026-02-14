@@ -9,14 +9,18 @@ export default function Layout() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  const API_URL = import.meta.env.VITE_API_URL;
   const location = useLocation();
 
   useEffect(() => {
     async function track() {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/track`, {
+      const res = await fetch(`${API_URL}/track`, {
         method: "POST",
         body: JSON.stringify({ url: location.pathname }),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
 
       if (!res.ok) {

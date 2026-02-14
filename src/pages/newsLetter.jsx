@@ -1,9 +1,51 @@
 import { useContext } from "react";
 import { AppContext } from "../components/context";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function NewsLetter() {
   const { isDesktop, isTablette, isPhone } = useContext(AppContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [submit, setSubmit] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  async function hanldeSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/user`, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ email: email }),
+      });
+
+      if (!res.ok) {
+        setError(true);
+        if (res.satus === 500) {
+          const data = await res.json();
+          console.log(data);
+          return;
+        }
+        const data = await res.text();
+        console.log(data);
+        return;
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setSubmit(true);
+    } catch (error) {
+      console.log("une erreur ", error);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <div className="bg-gray-100 h-full p-1">
       <div
@@ -33,13 +75,18 @@ export default function NewsLetter() {
             </p>
           </div>
           <div className="">
-            <form action="" className="flex flex-col">
+            <form
+              action=""
+              className="flex flex-col"
+              onSubmit={(e) => hanldeSubmit(e)}
+            >
               <span className="text-red-500 ">*</span>
               <input
                 type="text"
                 name="email"
                 placeholder="adresse email"
                 className="border-2 w-full p-2 text-xl border-green-700 focus:outline-none rounded-sm"
+                required
               />
               <p className="text-base text-gray-600">
                 Veuillez renseignez votre adresse email pour vous inscrire.{" "}
@@ -52,6 +99,7 @@ export default function NewsLetter() {
                   name="confirm"
                   id="confirm"
                   className="mt-5"
+                  required
                 />
                 <label htmlFor="confirm" className="text-md text-justify">
                   J'acceptes de recevoir vos e-mails et confirme avoir pris
@@ -65,14 +113,75 @@ export default function NewsLetter() {
 
               <button
                 type="submit"
-                className="mt-8 bg-black text-white p-1 text-2xl m-4"
+                className="mt-8 bg-black text-white p-1 text-2xl m-4 sm:w-100 flex items-center justify-center"
               >
-                Inscription
+                {loading ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-0"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <circle
+                        className="opacity-75"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        strokeDasharray="60"
+                        strokeDashoffset="20"
+                      />
+                    </svg>
+                  </span>
+                ) : (
+                  <span>Inscription</span>
+                )}
               </button>
+              {error && (
+                <p className="text-red-500 text-center">
+                  Une erreur est survenue. Veuillez réessayer.
+                </p>
+              )}
             </form>
           </div>
         </div>
       </div>
+      {submit && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center">
+          <div className="space-y-2">
+            <div className="flex justify-end">
+              <X className="bg-white size-8 p-1 rounded-full text-gray-500" />
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-center text-green-700">
+                Inscription réussie !
+              </h2>
+              <p className="text-gray-700 flex flex-col items-center gap-4">
+                <div>
+                  <span className="font-bold">Félicitations !</span> Vous êtes
+                  maintenant inscrit à notre newsletter.
+                </div>
+
+                <Link
+                  to="/"
+                  className="text-blue-600 hover:underline cursor-pointer"
+                >
+                  <ChevronLeft className="inline " size={16} /> Voir les
+                  articles
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

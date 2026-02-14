@@ -1,14 +1,17 @@
+import { useContext } from "react";
 import BodyHome from "../components/bodyHome";
 import Footer from "../components/Footer";
 import HeaderHome from "../components/headerHome";
+import { AppContext } from "../components/context";
 
 export default function Home() {
+  const { loadingArticles } = useContext(AppContext);
   return (
-    <div className="relative flex flex-col min-h-screen border">
+    <div className="relative flex flex-col border ">
       <HeaderHome />
-      <div className="flex-1">
+      <main className={`flex-1 ${loadingArticles && "min-h-[120vh]"} `}>
         <BodyHome />
-      </div>
+      </main>
       <Footer />
     </div>
   );

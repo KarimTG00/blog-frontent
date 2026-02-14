@@ -13,14 +13,14 @@ export default function BodyHome() {
     useContext(AppContext);
   return (
     <>
-      <main className="mx-auto p-2 px-4 lg:px-8 min-h-screen flex flex-col">
+      <div className="mx-auto p-2 px-4 lg:px-8 flex flex-col">
         <div>
           <h1 className={`text-2xl sm:text-3xl font-semibold my-4`}>
             Decouvrez les Dernieres actualitées cryptos
           </h1>
         </div>
         {loadingArticles && (
-          <div className="flex-1 min-w-full justify-center items-center flex">
+          <div className="flex-1 min-w-full justify-center items-center flex ">
             <Loading />
           </div>
         )}
@@ -34,12 +34,9 @@ export default function BodyHome() {
         >
           {article &&
             article?.map((el, index) => (
-              <Link to={`/single/${el._id}`}>
-                <div
-                  key={index}
-                  className=" shadow-sm  rounded-lg cursor-pointer hover:scale-101 hover:border-2 hover:border-green-700 duration-100"
-                >
-                  <div>
+              <Link to={`/single/${el._id}`} key={index}>
+                <div className=" shadow-sm  rounded-lg cursor-pointer hover:scale-101 hover:border-2 hover:border-green-700 duration-100">
+                  <div className="">
                     <Image el={el} />
                   </div>
 
@@ -58,7 +55,7 @@ export default function BodyHome() {
               </Link>
             ))}
         </div>
-      </main>
+      </div>
     </>
   );
 }

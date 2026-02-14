@@ -6,7 +6,6 @@ export default function Description({ el }) {
     return null;
   }
   const description = findParagraph(el);
-  console.log(description);
   return (
     <p className="mt-2  whitespace-pre-wrap sm:text-lg text-md">
       {description ? description.value : ""}...

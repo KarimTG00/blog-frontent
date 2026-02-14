@@ -1,7 +1,50 @@
 import { Facebook, Instagram, Twitter, Send, Github } from "lucide-react";
+import { useState } from "react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [submit, setSubmit] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  async function hanldeSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/user`, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ email: email }),
+      });
+
+      if (!res.ok) {
+        setError(true);
+        if (res.satus === 500) {
+          const data = await res.json();
+          console.log(data);
+          return;
+        }
+        const data = await res.text();
+        console.log(data);
+        return;
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setSubmit(true);
+      setError(false);
+    } catch (error) {
+      setError(true);
+      console.log("une erreur ", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <footer className="bg-black text-white pt-5 sm:pt-12 border-t-4 border-green-500 font-sans">
@@ -62,7 +105,10 @@ export default function Footer() {
           <p className="text-gray-300 mb-3 text-sm">
             Abonnez-vous à notre newsletter
           </p>
-          <form className="flex flex-col sm:flex-row gap-2">
+          <form
+            className="flex flex-col sm:flex-row gap-2"
+            onSubmit={(e) => hanldeSubmit(e)}
+          >
             <input
               type="email"
               placeholder="Votre email"
@@ -73,9 +119,42 @@ export default function Footer() {
               type="submit"
               className="px-4 py-2 bg-green-500 text-black font-semibold rounded hover:bg-green-400 transition-colors duration-300 whitespace-nowrap text-sm"
             >
-              S'abonner
+              {loading ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-0"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <circle
+                      className="opacity-75"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeDasharray="60"
+                      strokeDashoffset="20"
+                    />
+                  </svg>
+                </span>
+              ) : (
+                <span className="">{submit ? "👍" : "S'abonner"}</span>
+              )}
             </button>
           </form>
+          {error && (
+            <p className="text-red-500 text-center font-semibold">
+              Une erreur est survenue. Veuillez réessayer!
+            </p>
+          )}
         </div>
       </div>
 

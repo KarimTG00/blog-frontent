@@ -14,6 +14,15 @@ export default function SinglePage() {
   const { isDesktop, isTablette, article } = useContext(AppContext);
   const [liked, setLiked] = useState(false);
 
+  function semiTitle(titre) {
+    const tab = titre.split("");
+    if (tab.length < 50) {
+      return tab;
+    } else {
+      return tab.slice(0, 50);
+    }
+  }
+
   const [singleArticle, setSingleArticle] = useState();
 
   function extractText(node, result = []) {
@@ -135,17 +144,16 @@ export default function SinglePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     async function getArticle() {
       setLoading(true);
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/article/${id}`,
-          {
-            method: "GET",
-            headers: { "Content-type": "application/json" },
-          },
-        );
+        const res = await fetch(`${API_URL}/article/${id}`, {
+          method: "GET",
+          headers: { "Content-type": "application/json" },
+        });
 
         if (!res.ok) {
           if (res.status === 500 || res.status === 501) {
@@ -211,7 +219,7 @@ export default function SinglePage() {
     <div className="h-full flex flex-col">
       <HeaderHome />
 
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col w-full ">
         {loading && (
           <div className="min-w-full flex-1 flex items-center pb-20">
             <Loading />
@@ -234,7 +242,7 @@ export default function SinglePage() {
               )}
             </div>
 
-            <div className="sm:w-4xl mx-3 px-5 sm:mx-auto">
+            <div className="sm:w-3xl sm:px-3 mx-1 px-3 sm:mx-auto ">
               <div className={`${isDesktop ? "sm:text-center" : "text-left"}`}>
                 <h1 className="text-3xl lg:text-5xl sm:text-4xl font-bold my-5">
                   {singleArticle && singleArticle.title}
@@ -290,7 +298,7 @@ export default function SinglePage() {
                 </div>
                 <div className="mb-10">
                   <ul
-                    className={`sm:grid-cols-2 sm:gap-3 grid-cols-1 gap-1 grid space-y-5`}
+                    className={`sm:grid-cols-2 sm:gap-4 grid-cols-1 gap-1 grid space-y-5`}
                   >
                     {otherArticle()?.map((el, index) => (
                       <Link to={`/single/${el._id}`}>
@@ -298,11 +306,14 @@ export default function SinglePage() {
                           key={index}
                           className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
                         >
-                          <div className="flex gap-2 items-center cursor-pointer h-fit">
-                            <ImageRecent el={el} />
+                          <div className="flex gap-4 items-center cursor-pointer ">
+                            <div>
+                              <ImageRecent el={el} />
+                            </div>
+
                             <div className="">
                               <h2 className="font-semibold md:text-xl">
-                                {el.title}
+                                {semiTitle(el.title).join("")}...
                               </h2>
                             </div>
                           </div>
@@ -312,7 +323,6 @@ export default function SinglePage() {
                   </ul>
                 </div>
               </div>
-              {/* Articles recents */}
             </div>
           </div>
         )}

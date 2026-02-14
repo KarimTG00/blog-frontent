@@ -17,6 +17,8 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import { useEffect } from "react";
+import useAuthorization from "./components/Authentification.jsx";
+const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const router = createBrowserRouter([
     {
@@ -128,15 +130,16 @@ function App() {
     return result;
   }
 
-  // on gére la recuperation des articles
+  const { authorized, loadingAuth } = useAuthorization("getArticles", "GET"); // on recupére l'etat de la verification du token
 
+  // on gére la recuperation des articles
   const [loadingArticles, setLoadingArticles] = useState(false);
   const [errorArticles, setErrorArticles] = useState(false);
   useEffect(() => {
     async function getDoc() {
       try {
         setLoadingArticles(true);
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/articles`, {
+        const res = await fetch(`${API_URL}/articles`, {
           method: "get",
           headers: { "Content-type": "application/json" },
         });
@@ -178,6 +181,7 @@ function App() {
     getDoc();
   }, []);
 
+  // on crée l'editeur tiptap
   const editor = useEditor({
     extensions: [
       StarterKit, // definition de l'extention du tableau
@@ -203,13 +207,10 @@ function App() {
   async function DeleteArticle(id) {
     // todo delete article function
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/deleteArticle/${id}`,
-        {
-          method: "delete",
-          headers: { "Content-type": "application/json" },
-        },
-      );
+      const res = await fetch(`${API_URL}/deleteArticle/${id}`, {
+        method: "delete",
+        headers: { "Content-type": "application/json" },
+      });
 
       if (!res.ok) {
         if (res.status === 404) {
@@ -248,6 +249,9 @@ function App() {
         loadingArticles,
         errorArticles,
         DeleteArticle,
+        extractText,
+        authorized,
+        loadingAuth,
       }}
     >
       <RouterProvider router={router} />

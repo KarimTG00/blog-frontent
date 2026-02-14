@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../components/context";
 import Tiptap from "../../components/admin/Titap";
+import Loading from "../../components/loading";
+import { Link } from "react-router-dom";
 
 export default function NewArticles() {
   const { editor, contentJSON } = useContext(AppContext);
@@ -8,6 +10,8 @@ export default function NewArticles() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const { authorized, loadingAuth } = useContext(AppContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -26,9 +30,12 @@ export default function NewArticles() {
 
     try {
       setLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/new`, {
+      const res = await fetch(`${API_URL}/new`, {
         method: "post",
-        headers: { "Content-type": "Application/json" },
+        headers: {
+          "Content-type": "Application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
         body: JSON.stringify(objet),
       });
       if (!res.ok) {
@@ -48,7 +55,29 @@ export default function NewArticles() {
       setLoading(false);
     }
   }
-  console.log(contentJSON);
+
+  if (loadingAuth) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (!authorized && !loadingAuth) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen overflow-y-hidden gap-5">
+        <h1 className="text-xl">
+          Votre session a expirée, veuillez vous reconnecter
+        </h1>
+        <Link to="/admin">
+          <button className="bg-green-700 text-white p-2 rounded-lg text-lg font-semibold cursor-pointer">
+            Reconnection
+          </button>
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="m-2 p-2 sm:m-4 lg:max-w-5xl lg:mx-auto">
       <div className="">

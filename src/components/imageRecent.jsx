@@ -9,7 +9,7 @@ export default function ImageRecent({ el }) {
   const image = findImages(el);
   console.log(image.src);
   return (
-    <div className=" w-15 aspect-video overflow-hidden rounded-lg">
+    <div className="aspect-video overflow-hidden rounded-lg w-25 h-20">
       <img
         src={image && image.src}
         alt=""
