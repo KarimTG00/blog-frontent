@@ -8,7 +8,7 @@ export default function HeaderHome() {
   const { menuTrue, setMenuTrue } = useContext(AppContext);
   const [isSearch, setIsSearch] = useState(false);
   const [resultSearch, setResultSearch] = useState();
-  const URI = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   async function search(e) {
     e.preventDefault();
@@ -17,7 +17,7 @@ export default function HeaderHome() {
       const formData = new FormData(e.target);
       const query = formData.get("search");
       const response = await fetch(
-        `${URI}/search?q=${encodeURIComponent(query)}`,
+        `${API_URL}/search?q=${encodeURIComponent(query)}`,
       );
       const data = await response.json();
 
@@ -27,8 +27,6 @@ export default function HeaderHome() {
       console.log("une erreur lors de la recherche d'articles", error);
     }
   }
-
-  console.log(resultSearch);
 
   return (
     <header className=" bg-black  top-0">
@@ -69,12 +67,15 @@ export default function HeaderHome() {
                   ></div>
                   <ul className="bg-gray-100 absolute sm:w-xl flex flex-col justify-center border rounded-lg items-center mt-3">
                     {resultSearch.map((el, index) => (
-                      <li
-                        key={index}
-                        className="text-black sm:w-xl cursor-pointer border-b border-gray-300 px-2 hover:text-green-900"
-                      >
-                        {el.title}
-                      </li>
+                      <Link to={`/single/${el._id}`}>
+                        {" "}
+                        <li
+                          key={index}
+                          className="text-black sm:w-xl cursor-pointer border-b border-gray-300 px-2 hover:text-green-900"
+                        >
+                          {el.title}
+                        </li>
+                      </Link>
                     ))}
                   </ul>
                 </div>
