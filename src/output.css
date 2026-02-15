@@ -930,6 +930,18 @@
   .text-green-700 {
     color: var(--color-green-700);
   }
+  .text-green-700\/30 {
+    color: color-mix(in srgb, oklch(52.7% 0.154 150.069) 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-green-700) 30%, transparent);
+    }
+  }
+  .text-green-700\/50 {
+    color: color-mix(in srgb, oklch(52.7% 0.154 150.069) 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-green-700) 50%, transparent);
+    }
+  }
   .text-green-800 {
     color: var(--color-green-800);
   }

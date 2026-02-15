@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Loading from "../components/loading";
 import ErrorArticle from "../components/errorArticle";
 import ImageRecent from "../components/imageRecent";
+import { getTime } from "../components/date";
 
 export default function SinglePage() {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ export default function SinglePage() {
   const { isDesktop, isTablette, article } = useContext(AppContext);
   const [liked, setLiked] = useState(false);
 
+  function getDay(day) {
+    return new Date(day).toLocaleDateString();
+  }
   function semiTitle(titre) {
     const tab = titre.split("");
     if (tab.length < 50) {
@@ -251,16 +255,21 @@ export default function SinglePage() {
               <div
                 className={`${isDesktop || isTablette ? "flex gap-8 items-center sm:justify-center" : "space-x-3"}`}
               >
-                <span className="text-gray-500 text-lg">
-                  {singleArticle && singleArticle.createdAt} /
+                <span className="text-green-700/50 font-semibold text-lg">
+                  il y'a {singleArticle && getTime(singleArticle.createdAt)}
                 </span>
-                <span className="text-gray-500 text-lg">
-                  Par {singleArticle && singleArticle.auteur} /
+                /
+                <span className="text-green-700/50 font-semibold text-lg">
+                  Par {singleArticle && singleArticle.auteur}
                 </span>
-                <span className="text-gray-500 text-lg">
-                  {singleArticle && singleArticle.durer} min de lecture/
+                /
+                <span className="text-green-700/50 font-semibold text-lg">
+                  {singleArticle && singleArticle.durer} min de lecture
                 </span>
-                <span className="text-gray-500 text-lg">Crytpomonaies</span>
+                /
+                <span className="text-green-700/50 font-semibold text-lg">
+                  Crytpomonaies
+                </span>
               </div>
               <div className="mt-8 ">
                 <div>
