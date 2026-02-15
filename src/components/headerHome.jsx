@@ -18,11 +18,9 @@ export default function HeaderHome() {
       const query = formData.get("search");
       const response = await fetch(`${URI}/search?q=${query}`);
       const data = await response.json();
-      let results = [];
-      data.forEach((el) => {
-        results.push(el);
-      });
-      setResultSearch(results);
+
+      console.log(data);
+      setResultSearch(data);
     } catch (error) {
       console.log("une erreur lors de la recherche d'articles", error);
     }
@@ -73,7 +71,7 @@ export default function HeaderHome() {
                         key={index}
                         className="text-black sm:w-xl cursor-pointer border-b border-gray-300 px-2 hover:text-green-900"
                       >
-                        {el}
+                        {el.title}
                       </li>
                     ))}
                   </ul>

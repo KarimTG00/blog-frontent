@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderHome from "../components/headerHome";
 import { AppContext } from "../components/context";
@@ -187,7 +187,7 @@ export default function SinglePage() {
       }
     }
     getArticle();
-  }, []);
+  }, [id]);
 
   console.log("voici le singleArticle", singleArticle);
 
@@ -301,24 +301,23 @@ export default function SinglePage() {
                     className={`sm:grid-cols-2 sm:gap-4 grid-cols-1 gap-1 grid space-y-5`}
                   >
                     {otherArticle()?.map((el, index) => (
-                      <Link to={`/single/${el._id}`}>
-                        <li
-                          key={index}
-                          className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
-                        >
-                          <div className="flex gap-4 items-center cursor-pointer ">
-                            <div>
-                              <ImageRecent el={el} />
-                            </div>
-
-                            <div className="">
-                              <h2 className="font-semibold md:text-xl">
-                                {semiTitle(el.title).join("")}...
-                              </h2>
-                            </div>
+                      <li
+                        key={index}
+                        className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"
+                        onClick={() => navigate(`/single/${el._id}`)}
+                      >
+                        <div className="flex gap-4 items-center cursor-pointer ">
+                          <div>
+                            <ImageRecent el={el} />
                           </div>
-                        </li>
-                      </Link>
+
+                          <div className="">
+                            <h2 className="font-semibold md:text-xl">
+                              {semiTitle(el.title).join("")}...
+                            </h2>
+                          </div>
+                        </div>
+                      </li>
                     ))}
                   </ul>
                 </div>
