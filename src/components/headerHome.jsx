@@ -67,7 +67,7 @@ export default function HeaderHome() {
                   ></div>
                   <ul className="bg-gray-100 absolute sm:w-xl flex flex-col justify-center border rounded-lg items-center mt-3">
                     {resultSearch.map((el, index) => (
-                      <Link to={`/single/${el._id}`}>
+                      <Link to={`/single/${el.id}`}>
                         {" "}
                         <li
                           key={index}
