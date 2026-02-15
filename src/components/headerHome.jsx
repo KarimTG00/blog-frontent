@@ -16,7 +16,9 @@ export default function HeaderHome() {
     try {
       const formData = new FormData(e.target);
       const query = formData.get("search");
-      const response = await fetch(`${URI}/search?q=${query}`);
+      const response = await fetch(
+        `${URI}/search?q=${encodeURIComponent(query)}`,
+      );
       const data = await response.json();
 
       console.log(data);
