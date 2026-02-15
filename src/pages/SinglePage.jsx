@@ -16,7 +16,15 @@ export default function SinglePage() {
   const [liked, setLiked] = useState(false);
 
   function getDay(day) {
-    return new Date(day).toLocaleDateString();
+    const date = new Date(day);
+    const options = {
+      year: "numeric", // "2026"
+      month: "long", // "janvier"
+      day: "numeric", // "31"
+
+      // secondes optionnelles
+    };
+    return date.toLocaleDateString("fr-FR", options);
   }
   function semiTitle(titre) {
     const tab = titre.split("");
@@ -247,31 +255,32 @@ export default function SinglePage() {
             </div>
 
             <div className="sm:w-3xl sm:px-3 mx-1 px-3 sm:mx-auto ">
-              <div className={`${isDesktop ? "sm:text-center" : "text-left"}`}>
+              <div className={`${isDesktop ? "sm:text-center" : "text-left"} `}>
                 <h1 className="text-3xl lg:text-5xl sm:text-4xl font-bold my-5">
                   {singleArticle && singleArticle.title}
                 </h1>
               </div>
               <div
-                className={`${isDesktop || isTablette ? "flex gap-8 items-center sm:justify-center" : "space-x-3"}`}
+                className={` sm:flex sm:gap-8 sm:items-center sm:justify-center grid grid-cols-2`}
               >
-                <span className="text-green-700/50 font-semibold text-lg">
-                  il y'a {singleArticle && getTime(singleArticle.createdAt)}
+                <span className="text-gray-500 font-semibold text-lg flex gap-2">
+                  le {singleArticle && getDay(singleArticle.createdAt)}{" "}
+                  <div>/</div>
                 </span>
-                /
-                <span className="text-green-700/50 font-semibold text-lg">
+                <span className="text-gray-500  font-semibold text-lg flex gap-2 ">
                   Par {singleArticle && singleArticle.auteur}
+                  <div>/</div>
                 </span>
-                /
-                <span className="text-green-700/50 font-semibold text-lg">
-                  {singleArticle && singleArticle.durer} min de lecture
+                <span className="text-gray-500  font-semibold text-lg flex gap-2">
+                  {singleArticle && singleArticle.durer} min de lecture{" "}
+                  <div>/</div>
                 </span>
-                /
-                <span className="text-green-700/50 font-semibold text-lg">
+
+                <span className="text-gray-500 font-semibold flex text-lg ">
                   Crytpomonaies
                 </span>
               </div>
-              <div className="mt-8 ">
+              <div className="mt-4 ">
                 <div>
                   <p
                     className={`${isDesktop || isTablette ? "text-xl" : "text-lg"} whitespace-pre-wrap text-gray-900 mx-auto`}

@@ -115,7 +115,7 @@ export default function HeaderHome() {
             </div>
           </div>
         </div>
-        <div className="text-center space-x-3 text-normal text-green-500 font-bold underline ">
+        <div className="text-center space-x-3 text-normal text-green-500 font-bold underline sm:text-lg">
           <span className="cursor-pointer">Cryptomonaies</span>
           <span className="cursor-pointer">Nft</span>
           <span className="cursor-pointer">BlockChain</span>
