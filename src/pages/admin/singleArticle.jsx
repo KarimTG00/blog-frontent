@@ -99,8 +99,8 @@ export default function SingleArticles() {
         setError(true);
         return;
       }
-      const data = await res.json();
-      console.log("Article mis à jour:", data);
+      await res.json();
+      console.log("Article mis à jour:");
     } catch (error) {
       console.log("Erreur lors de la mise à jour de l'article:", error);
       setError(true);

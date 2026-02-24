@@ -209,7 +209,10 @@ function App() {
     try {
       const res = await fetch(`${API_URL}/deleteArticle/${id}`, {
         method: "delete",
-        headers: { "Content-type": "application/json" },
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
 
       if (!res.ok) {

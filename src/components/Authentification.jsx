@@ -47,7 +47,6 @@ function useAuthorization(endpoint, method) {
       }
     }
     authentification();
-    console.log(authorized);
   }, [endpoint, accessToken]);
   return { authorized, loadingAuth };
 }
