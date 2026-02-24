@@ -100,7 +100,7 @@ export default function SingleArticles() {
         return;
       }
       await res.json();
-      console.log("Article mis à jour:");
+      console.log("Article mis à jour");
     } catch (error) {
       console.log("Erreur lors de la mise à jour de l'article:", error);
       setError(true);
