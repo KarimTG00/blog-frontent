@@ -16,8 +16,17 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
-import { useEffect } from "react";
 import useAuthorization from "./components/Authentification.jsx";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
+import { getArticle, DeleteArticle } from "./components/requetes/api.jsx";
+
 const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const router = createBrowserRouter([
@@ -70,7 +79,7 @@ function App() {
   const isDesktop = useMediaQuery({ minWidth: 900 });
   const isTablette = useMediaQuery({ minWidth: 640, maxWidth: 899 });
   const isPhone = useMediaQuery({ maxWidth: 639 });
-  const [article, setArticle] = useState([]);
+  const queryClient = useQueryClient();
 
   function extractText(node, result = []) {
     if (node.type === "text" && node.text) {
@@ -133,53 +142,52 @@ function App() {
   const { authorized, loadingAuth } = useAuthorization("getArticles", "GET"); // on recupére l'etat de la verification du token
 
   // on gére la recuperation des articles
-  const [loadingArticles, setLoadingArticles] = useState(false);
-  const [errorArticles, setErrorArticles] = useState(false);
-  useEffect(() => {
-    async function getDoc() {
-      try {
-        setLoadingArticles(true);
-        const res = await fetch(`${API_URL}/articles`, {
-          method: "get",
-          headers: { "Content-type": "application/json" },
-        });
+  // const {
+  //   isLoading,
+  //   isError,
+  //   data: article,
+  // } = useQuery({
+  //   queryKey: ["articles"],
+  //   queryFn: getArticle,
+  //   select: (rawData) => {
+  //     return rawData.map((el) => {
+  //       const parsed = [];
+  //       el.content.forEach((child) => {
+  //         extractText(child, parsed);
+  //       });
+  //       return { ...el, content: parsed };
+  //     });
+  //   },
+  // });
 
-        if (!res.ok) {
-          if (res.status === 500) {
-            const data = await res.json();
-            console.log("une erreur : ", data);
-            setErrorArticles(true);
-            return;
-          }
-          const data = await res.text();
-          setErrorArticles(true);
-          console.log(data);
-          return;
-        }
-
-        const data = await res.json(); // tableau de tous les articles
-
-        // on formate le contenu tiptap en contenu utilisable
-        data.forEach((el) => {
+  const {
+    data,
+    fetchNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["text"],
+    queryFn: ({ pageParam }) => getArticle(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      return lastPage.nextPage;
+    },
+    select: (rawData) => ({
+      pages: rawData.pages.map((page) => ({
+        ...page,
+        data: page.data.map((el) => {
           const parsed = [];
-          el.content.forEach(
-            (child) => {
-              extractText(child, parsed);
-            },
-            (el.content = parsed),
-          );
-        });
-        setArticle(data);
-      } catch (error) {
-        setErrorArticles(true);
-        console.log("une erreur lors de la recuperation des articles :", error);
-        return `voici l'erreur: ${error}`;
-      } finally {
-        setLoadingArticles(false);
-      }
-    }
-    getDoc();
-  }, []);
+          el.content.forEach((child) => {
+            extractText(child, parsed);
+          });
+          return { ...el, content: parsed };
+        }),
+      })),
+      pageParams: rawData.pageParams,
+    }),
+  });
 
   // on crée l'editeur tiptap
   const editor = useEditor({
@@ -204,38 +212,16 @@ function App() {
     },
   });
 
-  async function DeleteArticle(id) {
-    // todo delete article function
-    try {
-      const res = await fetch(`${API_URL}/deleteArticle/${id}`, {
-        method: "delete",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+  const createMutation = useMutation({
+    mutationFn: (id) => DeleteArticle(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["article"] });
+      console.log("article suprimé");
+    },
+  });
 
-      if (!res.ok) {
-        if (res.status === 404) {
-          const data = await res.json();
-          console.log("erreur lors de la suppression :", data);
-          return;
-        }
-        if (res.status === 500) {
-          const data = await res.json();
-          console.log("une erreur lors de la suppression :", data);
-          return;
-        }
-        const data = await res.text();
-        console.log("une erreur lors de la suppression :", data);
-        return;
-      }
-
-      const data = await res.json();
-      console.log("article supprimé avec succès :", data);
-    } catch (error) {
-      console.log("une erreur lors de la suppression de l'article :", error);
-    }
+  function deleted(id) {
+    createMutation.mutate(id);
   }
 
   return (
@@ -247,14 +233,17 @@ function App() {
         menuTrue,
         setMenuTrue,
         editor,
-        article,
-        setArticle,
-        loadingArticles,
-        errorArticles,
+        fetchNextPage,
+        isFetching,
+        isFetchingNextPage,
+        status,
+        data,
         DeleteArticle,
         extractText,
         authorized,
         loadingAuth,
+        deleted,
+        hasNextPage,
       }}
     >
       <RouterProvider router={router} />

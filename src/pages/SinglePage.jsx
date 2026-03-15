@@ -8,12 +8,37 @@ import Loading from "../components/loading";
 import ErrorArticle from "../components/errorArticle";
 import ImageRecent from "../components/imageRecent";
 import { getTime } from "../components/date";
+import { useQuery } from "@tanstack/react-query";
+import { getOtherArticles, getSingleArticle } from "../components/requetes/api";
 
 export default function SinglePage() {
   const navigate = useNavigate();
 
   const { isDesktop, isTablette, article } = useContext(AppContext);
   const [liked, setLiked] = useState(false);
+  const { id } = useParams();
+
+  const { data: singleArticle, isError: otherError } = useQuery({
+    queryKey: ["singleArticle", id],
+    queryFn: () => getSingleArticle(id),
+    enabled: !!id,
+
+    select: (rawData) => {
+      const parsed = [];
+      rawData.content.map((el) => {
+        const result = [];
+        extractText(el, result);
+        parsed.push(...result);
+      });
+      return { ...rawData, content: parsed };
+    },
+  });
+  console.log(otherError);
+
+  const { data } = useQuery({
+    queryKey: ["otherArticle"],
+    queryFn: getOtherArticles,
+  });
 
   function getDay(day) {
     const date = new Date(day);
@@ -35,7 +60,7 @@ export default function SinglePage() {
     }
   }
 
-  const [singleArticle, setSingleArticle] = useState();
+  // const [singleArticle, setSingleArticle] = useState();
 
   function extractText(node, result = []) {
     if (node.type === "text" && node.text) {
@@ -152,54 +177,53 @@ export default function SinglePage() {
     }
   }
 
-  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    async function getArticle() {
-      setLoading(true);
-      try {
-        const res = await fetch(`${API_URL}/article/${id}`, {
-          method: "GET",
-          headers: { "Content-type": "application/json" },
-        });
+  // useEffect(() => {
+  //   async function getArticle() {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch(`${API_URL}/article/${id}`, {
+  //         method: "GET",
+  //         headers: { "Content-type": "application/json" },
+  //       });
 
-        if (!res.ok) {
-          if (res.status === 500 || res.status === 501) {
-            const data = await res.json();
-            console.log(data);
-            setError(true);
-            return;
-          }
-          setError(true);
-          const data = await res.text();
-          console.log(data);
-          return;
-        }
+  //       if (!res.ok) {
+  //         if (res.status === 500 || res.status === 501) {
+  //           const data = await res.json();
+  //           console.log(data);
+  //           setError(true);
+  //           return;
+  //         }
+  //         setError(true);
+  //         const data = await res.text();
+  //         console.log(data);
+  //         return;
+  //       }
 
-        const data = await res.json();
+  //       const data = await res.json();
 
-        // on format l'article tiptap en objet utilisable
-        const parsed = [];
-        for (const el of data.content) {
-          const result = [];
-          extractText(el, result); // on appelle la fonction d'extraction de texte
-          parsed.push(...result);
-        }
+  //       // on format l'article tiptap en objet utilisable
+  //       const parsed = [];
+  //       for (const el of data.content) {
+  //         const result = [];
+  //         extractText(el, result); // on appelle la fonction d'extraction de texte
+  //         parsed.push(...result);
+  //       }
 
-        setSingleArticle({ ...data, content: parsed });
-      } catch (error) {
-        setError(true);
-        console.log("voici l'erreur", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    getArticle();
-  }, [id]);
+  //       setSingleArticle({ ...data, content: parsed });
+  //     } catch (error) {
+  //       setError(true);
+  //       console.log("voici l'erreur", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   getArticle();
+  // }, [id]);
 
   console.log("voici le singleArticle", singleArticle);
 
@@ -216,7 +240,7 @@ export default function SinglePage() {
   // fonction pour trouver les autres articles sauf celui affiché
 
   function otherArticle() {
-    const others = article.filter((el) => el._id !== id);
+    const others = data.otherArticle.filter((el) => el._id !== id);
     if (others) {
       return others.length < 4
         ? others.slice(0, others.length)
@@ -225,7 +249,7 @@ export default function SinglePage() {
       return;
     }
   }
-  const image = findImage(singleArticle);
+  const image = findImage(singleArticle); // trouve la premiere image de l'article
 
   return (
     <div className="h-full flex flex-col">
@@ -256,7 +280,7 @@ export default function SinglePage() {
 
             <div className="sm:w-3xl sm:px-3 mx-1 px-3 sm:mx-auto ">
               <div className={`${isDesktop ? "sm:text-center" : "text-left"} `}>
-                <h1 className="text-3xl lg:text-5xl sm:text-4xl font-bold my-5">
+                <h1 className="text-3xl lg:text-5xl sm:text-3xl md:text-4xl font-bold my-5">
                   {singleArticle && singleArticle.title}
                 </h1>
               </div>
@@ -282,9 +306,7 @@ export default function SinglePage() {
               </div>
               <div className="mt-4 ">
                 <div>
-                  <p
-                    className={`${isDesktop || isTablette ? "text-xl" : "text-lg"} whitespace-pre-wrap text-gray-900 mx-auto`}
-                  >
+                  <p className=" whitespace-pre-wrap text-gray-900 mx-auto newfont text-[16px] md:text-lg lg:text-lg">
                     {" "}
                     {singleArticle &&
                       singleArticle?.content.slice(1).map((el, index) => (
@@ -318,7 +340,7 @@ export default function SinglePage() {
                   <ul
                     className={`sm:grid-cols-2 sm:gap-4 grid-cols-1 gap-1 grid space-y-5`}
                   >
-                    {otherArticle()?.map((el, index) => (
+                    {otherArticle().map((el, index) => (
                       <li
                         key={index}
                         className=" mx-2 hover:scale-101 duration-75 rounded-lg sm:h-fit max-h-40 hover:text-green-700"

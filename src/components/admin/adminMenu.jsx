@@ -7,12 +7,13 @@ import { useState } from "react";
 import Loading from "../loading";
 import AllUser from "./feedUser";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { total, getDoc } from "../requetes/api";
 
 export default function AdminMenu() {
-  const { article, DeleteArticle, extractText } = useContext(AppContext);
+  const { deleted, DeleteArticle, extractText } = useContext(AppContext);
   const [total, setTotal] = useState();
   const navigate = useNavigate();
-  const [adminArticle, setAdminArticle] = useState();
   const [dayViews, setDayViews] = useState(0);
   // const [loading, setLoading] = useState(false);
 
@@ -76,48 +77,26 @@ export default function AdminMenu() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    async function getDoc() {
-      try {
-        const res = await fetch(`${API_URL}/Adminarticles`, {
-          method: "get",
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
+  // recuperation des datas
+  const {
+    isLoading,
+    data: adminArticle,
+    isError,
+  } = useQuery({
+    queryKey: ["article"],
+    queryFn: () => getDoc(),
+    // la transformation
+    select: (rawData) => {
+      return rawData.map((el) => {
+        const parsed = [];
+        el.content.forEach((child) => {
+          extractText(child, parsed);
         });
 
-        if (!res.ok) {
-          if (res.status === 500) {
-            const data = await res.json();
-            console.log("une erreur : ", data);
-            return;
-          }
-          const data = await res.text();
-          console.log(data);
-          return;
-        }
-
-        const data = await res.json(); // tableau de tous les articles
-
-        // on formate le contenu tiptap en contenu utilisable
-        data.forEach((el) => {
-          const parsed = [];
-          el.content.forEach(
-            (child) => {
-              extractText(child, parsed);
-            },
-            (el.content = parsed),
-          );
-        });
-        setAdminArticle(data);
-      } catch (error) {
-        console.log("une erreur lors de la recuperation des articles :", error);
-        return `voici l'erreur: ${error}`;
-      }
-    }
-    getDoc();
-  }, []);
+        return { ...el, content: parsed };
+      });
+    },
+  });
 
   if (loadingAuth) {
     return (
@@ -191,38 +170,43 @@ export default function AdminMenu() {
               <h2 className="text-2xl font-semibold">Derniers articles</h2>
               <div className="space-y-4">
                 {/* {loading && <Loading />} */}
-                {adminArticle &&
-                  adminArticle.slice(0, 5).map((el, index) => (
-                    <li
-                      key={index}
-                      className="flex pb-4 border border-gray-400 p-2 rounded-lg cursor-pointer hover:scale-101 duration-100 gap-1 relative "
-                    >
-                      <Link
-                        to={`/admin/dashboard/articles/${el._id}`}
-                        className="flex-1"
-                      >
-                        <div>
-                          <div className="">
-                            <h3 className="w-70 md:w-150 overflow-auto text-lg text-gray-900">
-                              {el.title}
-                            </h3>
-                            <div className="space-x-4">
-                              <span className="text-md text-green-600">
-                                {new Date(el.createdAt).toLocaleDateString()}
-                              </span>
-                              <span>0 vue(s)</span>
+                {isLoading && !adminArticle
+                  ? "chargement..."
+                  : isError
+                    ? "une erreur"
+                    : adminArticle.slice(0, 5).map((el, index) => (
+                        <li
+                          key={index}
+                          className="flex pb-4 border border-gray-400 p-2 rounded-lg cursor-pointer hover:scale-101 duration-100 gap-1 relative "
+                        >
+                          <Link
+                            to={`/admin/dashboard/articles/${el._id}`}
+                            className="flex-1"
+                          >
+                            <div>
+                              <div className="">
+                                <h3 className="w-70 md:w-150 overflow-auto text-lg text-gray-900">
+                                  {el.title}
+                                </h3>
+                                <div className="space-x-4">
+                                  <span className="text-md text-green-600">
+                                    {new Date(
+                                      el.createdAt,
+                                    ).toLocaleDateString()}
+                                  </span>
+                                  <span>0 vue(s)</span>
+                                </div>
+                              </div>
                             </div>
+                          </Link>
+                          <div className="flex items-end">
+                            <Delete
+                              className="cursor-pointer"
+                              onClick={() => deleted(el._id)}
+                            />
                           </div>
-                        </div>
-                      </Link>
-                      <div className="flex items-end">
-                        <Delete
-                          className="cursor-pointer"
-                          onClick={() => DeleteArticle(el._id)}
-                        />
-                      </div>
-                    </li>
-                  ))}
+                        </li>
+                      ))}
               </div>
 
               <div className="text-left flex justify-end gap-3">

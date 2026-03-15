@@ -7,7 +7,7 @@ export default function Description({ el }) {
   }
   const description = findParagraph(el);
   return (
-    <p className="mt-2  whitespace-pre-wrap sm:text-lg text-md">
+    <p className="mt-2  whitespace-pre-wrap sm:text-lg text-md ">
       {description ? description.value : ""}...
     </p>
   );
